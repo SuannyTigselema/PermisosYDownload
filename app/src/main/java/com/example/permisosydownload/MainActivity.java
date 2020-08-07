@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.frosquivel.magicalcamera.MagicalCamera;
@@ -32,18 +33,19 @@ public class MainActivity extends AppCompatActivity {
     private final static int RESIZE_PHOTO_PIXELS_PERCENTAGE=50;
     private MagicalCamera magicalCamera;
     private ImageView imageViewFoto;
+    private TextView txtRUTA;
     private String path;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-      // permisos per = new permisos(this);
-       // per.getPermission();
-       // findViewById(R.id.btnCamara).setOnClickListener(this);
+        // permisos per = new permisos(this);
+        // per.getPermission();
+        // findViewById(R.id.btnCamara).setOnClickListener(this);
         imageViewFoto=findViewById(R.id.imageView);
-
-       ArrayList<String> permisos = new ArrayList<String>();
+        txtRUTA=findViewById(R.id.txtRUTA);
+        ArrayList<String> permisos = new ArrayList<String>();
         permisos.add(Manifest.permission.CAMERA);
         permisos.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         permisos.add(Manifest.permission.READ_EXTERNAL_STORAGE);
@@ -115,7 +117,12 @@ public class MainActivity extends AppCompatActivity {
                 Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri,
                         DocumentsContract.getTreeDocumentId(uri));
                 path = uri.getPath();
-                Toast.makeText(this.getApplicationContext(),"RUTA: "  + path,Toast.LENGTH_LONG).show();
+                String[] rutas = path.split(":");
+                String ruta1 = rutas[0];
+                String ruta2 = rutas[1];
+
+                txtRUTA.setText(ruta2);
+                Toast.makeText(this.getApplicationContext(),"RUTA: "  + ruta2,Toast.LENGTH_LONG).show();
 
                 String url = "http://tierra.rediris.es/hidrored/ebooks/miguel/AguaFuenteVida.pdf";
                 DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
@@ -125,7 +132,8 @@ public class MainActivity extends AppCompatActivity {
                     request.allowScanningByMediaScanner();
                     request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
                 }
-                request.setDestinationInExternalPublicDir(path, "filedownload.pdf");
+
+                request.setDestinationInExternalPublicDir(ruta2, "filedownload.pdf");
                 DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
                 try {
                     manager.enqueue(request);
